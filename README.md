@@ -22,11 +22,11 @@
 
 * [ElementRequestPointerLockInShadow](https://chromestatus.com/metrics/feature/timeline/popularity/1421)
 
-<svg width="960" height="850">
+<svg width="700" height="750">
   <g transform="translate(0, 0) rotate(0)">
-    <foreignObject>
+    <foreignObject x="0" y="0" width="700" height="750">
       <body xmlns="http://www.w3.org/1999/xhtml">
-        <iframe src="https://chromestatus.com/metrics/feature/timeline/popularity/1689" style="width:700px;height:750px"  onload="setTimeout(()=>{document.body.style.background='lightgreen'},100)"></iframe>
+        <iframe src="https://chromestatus.com/metrics/feature/timeline/popularity/1689" style="width:700px;height:750px" onload="setTimeout(()=>{document.body.style.background='lightgreen'},100)"></iframe>
       </body>
     </foreignObject>
   </g>
