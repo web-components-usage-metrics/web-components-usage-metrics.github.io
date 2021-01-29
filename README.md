@@ -1,42 +1,8 @@
-# web-components-usage-metrics
-
-* [**CustomElementsRegisteryDefine**](https://chromestatus.com/metrics/feature/timeline/popularity/1689)
-
-<svg width="700" height="750">
+<svg width='0' height='0'>
   <g transform="translate(0, 0) rotate(0)">
-    <foreignObject x="0" y="0" width="700" height="750">
-      <body xmlns="http://www.w3.org/1999/xhtml">
-        <iframe src="https://chromestatus.com/metrics/feature/timeline/popularity/1689" scrolling="no" style="width:700px;height:750px" onload="setTimeout(()=>{this.closest('svg').style.background='lightgreen'},100)"></iframe>
-      </body>
+    <foreignObject x='0' y='0' width='0' height='0'>
+        <iframe src='https://chromestatus.com/metrics/feature/timeline/popularity/${id}' onload="document.body.innerHTML=`<h1>Web Components technologies<br>ChromeStatus usage stats</h1>`+'CustomElementsRegisteryDefine/1689,ElementAttachShadow/804,ElementAttachShadowOpen/907,ElementAttachShadowClosed/908,ShadowRootDelegatesFocus/1308,ShadowRootPointerLockElement/1422,ElementAttachInternals/3435,ElementCreateShadowRootMultiple/779,ElementCreateShadowRootMultipleWithUserAgentShadowRoot/800'.split(',')
+.map(topic=>{let [title,id]=topic.split('/');return `<h2><a href='https://chromestatus.com/metrics/feature/timeline/popularity/${id}'>${title}</a></h2><svg width='700' height='750'><foreignObject x='0' y='0' width='700' height='750'><iframe src='https://chromestatus.com/metrics/feature/timeline/popularity/${id}' scrolling='no' style='width:700px;height:750px'></iframe></foreignObject></svg>`}).join``"></iframe>
     </foreignObject>
   </g>
 </svg>
-
-* [ShadowRootDelegatesFocus](https://chromestatus.com/metrics/feature/timeline/popularity/1308)
-
-<svg width="700" height="750">
-  <g transform="translate(0, 0) rotate(0)">
-    <foreignObject x="0" y="0" width="700" height="750">
-      <body xmlns="http://www.w3.org/1999/xhtml">
-        <iframe src="https://chromestatus.com/metrics/feature/timeline/popularity/1308" scrolling="no" style="width:700px;height:750px" onload="setTimeout(()=>{this.closest('svg').style.background='lightblue'},100)"></iframe>
-      </body>
-    </foreignObject>
-  </g>
-</svg>
-
-* [ShadowRootPointerLockElement](https://chromestatus.com/metrics/feature/timeline/popularity/1422)
-
-* [ElementAttachInternals](https://chromestatus.com/metrics/feature/timeline/popularity/3435)
-
-* [ElementAttachShadow](https://chromestatus.com/metrics/feature/timeline/popularity/804)
-
-* [ElementAttachShadowClosed](https://chromestatus.com/metrics/feature/timeline/popularity/908)
-
-* [ElementAttachShadowOpen](https://chromestatus.com/metrics/feature/timeline/popularity/907)
-
-* [ElementCreateShadowRootMultiple](https://chromestatus.com/metrics/feature/timeline/popularity/779)
-
-* [ElementCreateShadowRootMultipleWithUserAgentShadowRoot](https://chromestatus.com/metrics/feature/timeline/popularity/800)
-
-* [ElementRequestPointerLockInShadow](https://chromestatus.com/metrics/feature/timeline/popularity/1421)
-
