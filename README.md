@@ -26,7 +26,7 @@
   <g transform="translate(0, 0) rotate(0)">
     <foreignObject x="10" y="10" width="960" height="850">
       <body xmlns="http://www.w3.org/1999/xhtml">
-        <iframe src="https://chromestatus.com/metrics/feature/timeline/popularity/1689" style="width:960px;height:850px"></iframe>
+        <iframe src="https://chromestatus.com/metrics/feature/timeline/popularity/1689" style="width:600px;height:300px"  scrolling="no" onload="window.top.scrollTo(0,300);"></iframe>
       </body>
     </foreignObject>
   </g>
