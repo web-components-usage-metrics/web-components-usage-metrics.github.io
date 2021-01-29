@@ -23,10 +23,10 @@
 * [ElementRequestPointerLockInShadow](https://chromestatus.com/metrics/feature/timeline/popularity/1421)
 
 <svg width="960" height="850">
-  <g transform="translate(300, 0) rotate(20)">
-    <foreignObject x="10" y="10" width="800" height="800">
+  <g transform="translate(0, 0) rotate(0)">
+    <foreignObject x="10" y="10" width="960" height="850">
       <body xmlns="http://www.w3.org/1999/xhtml">
-        <iframe src="https://chromestatus.com/metrics/feature/timeline/popularity/1689" style="width:1200px;height:800px"></iframe>
+        <iframe src="https://chromestatus.com/metrics/feature/timeline/popularity/1689" style="width:960px;height:850px"></iframe>
       </body>
     </foreignObject>
   </g>
