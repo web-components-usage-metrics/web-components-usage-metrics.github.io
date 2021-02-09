@@ -1,0 +1,197 @@
+<html>
+  <head>
+    <title>Web Components Inspector Chrome Platform Feature Status</title>
+    <meta charset="UTF-8" />
+    <meta
+      is="Description"
+      content="Qomponents: Web Components Inspector Chrome Platform Feature Status"
+    />
+    <style>
+      body {
+        --background: lightgrey;
+        background: var(--background);
+      }
+      svg {
+        background: beige;
+        --scale: 1.25;
+        width: calc(300px * var(--scale));
+        height: calc(100px * var(--scale));
+      }
+      qomponents-chromestatus-featurepopularity {
+        display: inline-block;
+        margin: 0.2em;
+      }
+    </style>
+  </head>
+  <body>
+    <qomponents-chromestatus-features></qomponents-chromestatus-features>
+    <script>
+      const prefix = "qomponents-chromestatus";
+      const _FEATURE = prefix + "-featurepopularity";
+      const _OVERVIEW = prefix + "-features";
+      const _LASTDAYS = prefix + "-lastdays";
+      class ChromeStatusBaseElement extends HTMLElement {
+        // =================================================================== BaseElement - closestElement
+        closestElement(selector, el = this) {
+          return (
+            (el && el != document && el != window && el.closest(selector)) ||
+            this.closestElement(selector, el.getRootNode().host)
+          );
+        }
+        // =================================================================== BaseElement - createElement
+        createElement(
+          tagname,
+          {
+            innerHTML = "",
+            classes = [],
+            attributes = {},
+            children = [],
+            ...properties
+          } = {},
+          $EL = document.createElement(tagname)
+        ) {
+          Object.keys(attributes).map((key) =>
+            $EL.setAttribute(key, attributes[key])
+          );
+          $EL.classList.add(...classes);
+          Object.assign($EL, properties);
+          innerHTML && ($EL.innerHTML = innerHTML);
+          $EL.append(children);
+          return $EL;
+        }
+      }
+      customElements.define(
+        _FEATURE,
+        class extends ChromeStatusBaseElement {
+          async connectedCallback() {
+            this.id = this.getAttribute("id");
+            this.innerHTML = `<h2>Loading: ${this.id}</h2>`;
+            let response = await fetch(
+              "https://chromestatus.com/data/timeline/featurepopularity?bucket_id=" +
+                this.id
+            );
+            this.innerHTML = "";
+            let data = await response.json();
+            this.title = data[0].property_name;
+            this.high = 0;
+            this.low = 100;
+            this.data = data.map((day) => {
+              let { date, day_percentage } = day;
+              let percentage = day_percentage * 100;
+              if (percentage > this.high) this.high = percentage;
+              if (percentage < this.low) this.low = percentage;
+              return {
+                date,
+                percentage,
+              };
+            });
+            let url = `https://chromestatus.com/metrics/feature/timeline/popularity/${this.id}`;
+            this.append(
+              this.createElement(_LASTDAYS)
+            );
+          }
+        }
+      );
+      customElements.define(
+        _LASTDAYS,
+        class extends ChromeStatusBaseElement {
+          connectedCallback() {
+            let roundPercentage = (x) => ~~(x * 1e3) / 1e3;
+            let _feature = this.closestElement(_FEATURE);
+            let data = _feature.data;
+            let sliced = 52 * 3;
+            let high = 0;
+            let low = 100;
+            let pctCount = 0;
+            let days = 7;
+            let shortrange = [];
+            let average = data
+              .reduceRight((range, day, idx, arr) => {
+                pctCount += day.percentage;
+                shortrange.push(day.percentage);
+                if (pctCount && !(idx % days)) {
+                  let percentage =
+                    shortrange.reduce((av, p) => av + p, 0) / shortrange.length;
+                  range.push({
+                    date: day.date,
+                    percentage: roundPercentage(percentage),
+                  });
+                  pctCount = 0;
+                  shortrange = [];
+                }
+                return range;
+              }, [])
+              .reverse();
+            let datapoints = average.slice(-sliced).map((day, idx) => {
+              let { date, percentage } = day;
+              if (percentage > high) high = percentage;
+              if (percentage < low) low = percentage;
+              return {
+                x: idx * 1.5,
+                y: 100 - day.percentage * 3.5,
+                date,
+                percentage,
+              };
+            });
+            let diff = high - low;
+            let firstpoint = datapoints[0];
+            let lastpoint = datapoints.slice(-1)[0];
+            console.log(lastpoint);
+            let yoffset = high < 2 ? -15 : low; // shift y 5 pixels up or low down
+            let points = datapoints.map(({ x, y }) => {
+              if (high > 25) {
+                y = y / 5;
+                yoffset = 80;
+                lastpoint.y = lastpoint.y / 5;
+              }
+              return x + " " + y;
+            });
+            let pline = `<polyline stroke='blue' fill='none' stroke-width='1' transform='translate(10 ${
+              low - 10 + yoffset
+            })' points='${points}'/>`;
+            let axisY = `<g stroke='black' stroke-width='1'><line x1='10' y1='0' x2='10' y2='100'/><line x1='10' y1='100' x2='${sliced}' y2='100'/></g>`;
+            let lastpointlabel = `<text x='${
+              lastpoint.x
+            }' stroke='none' fill='blue' y='${
+              lastpoint.y + 5 + low + yoffset
+            }'> ${lastpoint.percentage} %</text>`;
+            let lastdate = `<text font-size='8px' text-anchor='end' x='${
+              lastpoint.x + 45
+            }' y='${lastpoint.y + 13 + low + yoffset}'>${
+              lastpoint.date
+            }</text>`;
+            let daterange = `<text font-size='7px' x='5' y='19'>${firstpoint.date} to ${lastpoint.date}</text>`;
+            let lowlabel = `<text x='5' y='30'>low:</text><text x='85' y='30' text-anchor='end'>${low} %</text>`;
+            let highlabel = `<text x='5' y='40'>high:</text><text x='85' y='40' text-anchor='end'>${high} %</text>`;
+            let title = `<text x='5' y='10'>${_feature.id}  ${_feature.title}</text>${daterange}`;
+            let labels = `<g font-size='12px' font-family='arial'>${title}${lowlabel}${highlabel}${lastpointlabel}${lastdate}${pline}</g>`;
+            let svg = `<svg preserveAspectRatio="xMinYMid meet" xmlns='http://www.w3.org/2000/svg' viewBox="0 0 ${sliced} ${100}">${labels}</svg>`;
+
+            this.innerHTML = svg;
+            this.onclick = (evt) =>
+              window.open(
+                `https://chromestatus.com/metrics/feature/timeline/popularity/${_feature.id}`
+              );
+          }
+        }
+      );
+      customElements.define(
+        _OVERVIEW,
+        class extends ChromeStatusBaseElement {
+          connectedCallback() {
+            // V0 1897,456
+            let WebComponentsFeatures = "1689,804,2769,907,908,1467,1898,1118,1468,1308,1422,3435,2164,2441,2848,779"
+              .split(",")
+              .map((id, idx) => {
+                let el = document.createElement(_FEATURE);
+                el.id = id;
+                if (idx < 32) return el;
+              })
+              .filter(Boolean);
+            this.append(...WebComponentsFeatures);
+          }
+        }
+      );
+    </script>
+  </body>
+</html>
