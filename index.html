@@ -12,8 +12,9 @@
         background: var(--background);
       }
       svg {
+        cursor: pointer;
         background: beige;
-        --scale: 1.25;
+        --scale: 1.3;
         width: calc(300px * var(--scale));
         height: calc(100px * var(--scale));
       }
@@ -30,6 +31,7 @@
       const _FEATURE = prefix + "-featurepopularity";
       const _OVERVIEW = prefix + "-features";
       const _LASTDAYS = prefix + "-lastdays";
+      // ************************************************************************ ChromeStatusBaseElement
       class ChromeStatusBaseElement extends HTMLElement {
         // =================================================================== BaseElement - closestElement
         closestElement(selector, el = this) {
@@ -60,6 +62,7 @@
           return $EL;
         }
       }
+      // ************************************************************************ feature
       customElements.define(
         _FEATURE,
         class extends ChromeStatusBaseElement {
@@ -172,12 +175,30 @@
           }
         }
       );
+      // ************************************************************************ overview
       customElements.define(
         _OVERVIEW,
         class extends ChromeStatusBaseElement {
           connectedCallback() {
             // V0 1897,456
-            let WebComponentsFeatures = [1689,804,2769,1467,1898,907,908,1118,1468,1308,1422,3435,2164,2441,2848,779]
+            let WebComponentsFeatures = [
+              1689,
+              804,
+              2769,
+              1467,
+              1898,
+              907,
+              908,
+              1118,
+              1468,
+              1308,
+              1422,
+              3435,
+              2164,
+              2441,
+              2848,
+              779,
+            ]
               //.sort()
               //.reverse()
               .map((id, idx) => {
