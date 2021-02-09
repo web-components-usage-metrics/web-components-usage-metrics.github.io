@@ -86,9 +86,7 @@
               };
             });
             let url = `https://chromestatus.com/metrics/feature/timeline/popularity/${this.id}`;
-            this.append(
-              this.createElement(_LASTDAYS)
-            );
+            this.append(this.createElement(_LASTDAYS));
           }
         }
       );
@@ -136,7 +134,6 @@
             let diff = high - low;
             let firstpoint = datapoints[0];
             let lastpoint = datapoints.slice(-1)[0];
-            console.log(lastpoint);
             let yoffset = high < 2 ? -15 : low; // shift y 5 pixels up or low down
             let points = datapoints.map(({ x, y }) => {
               if (high > 25) {
@@ -180,8 +177,9 @@
         class extends ChromeStatusBaseElement {
           connectedCallback() {
             // V0 1897,456
-            let WebComponentsFeatures = "1689,804,2769,907,908,1467,1898,1118,1468,1308,1422,3435,2164,2441,2848,779"
-              .split(",")
+            let WebComponentsFeatures = [1689,804,2769,1467,1898,907,908,1118,1468,1308,1422,3435,2164,2441,2848,779]
+              //.sort()
+              //.reverse()
               .map((id, idx) => {
                 let el = document.createElement(_FEATURE);
                 el.id = id;
