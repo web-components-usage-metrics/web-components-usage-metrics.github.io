@@ -104,29 +104,40 @@
             let high = 0;
             let low = 100;
             let pctCount = 0;
-            let days = 7;
-            let shortrange = [];
+            let daysRange = 7;
+            let rangeData = [];
             let average = data
               .reduceRight((range, day, idx, arr) => {
                 pctCount += day.percentage;
-                shortrange.push(day.percentage);
-                if (pctCount && !(idx % days)) {
+                rangeData.push(day);
+                if (pctCount && !(idx % daysRange)) {
                   let percentage =
-                    shortrange.reduce((av, p) => av + p, 0) / shortrange.length;
+                    rangeData.reduce((av, day) => av + day.percentage, 0) /
+                    rangeData.length;
                   range.push({
-                    date: day.date,
+                    date: rangeData[0].date,
                     percentage: roundPercentage(percentage),
                   });
                   pctCount = 0;
-                  shortrange = [];
+                  rangeData = [];
                 }
                 return range;
               }, [])
               .reverse();
+            let lastyear = 2000;
+            let yearXs = [];
             let datapoints = average.slice(-sliced).map((day, idx) => {
               let { date, percentage } = day;
               if (percentage > high) high = percentage;
               if (percentage < low) low = percentage;
+              let year = Number(day.date.slice(0, 4));
+              if (year > lastyear) {
+                yearXs.push({
+                  x: idx * 1.5,
+                  year,
+                });
+                lastyear = year;
+              }
               return {
                 x: idx * 1.5,
                 y: 100 - day.percentage * 3.5,
@@ -141,7 +152,7 @@
             let points = datapoints.map(({ x, y }) => {
               if (high > 25) {
                 y = y / 5;
-                yoffset = 80;
+                yoffset = 70;
                 lastpoint.y = lastpoint.y / 5;
               }
               return x + " " + y;
@@ -151,20 +162,22 @@
             })' points='${points}'/>`;
             let axisY = `<g stroke='black' stroke-width='1'><line x1='10' y1='0' x2='10' y2='100'/><line x1='10' y1='100' x2='${sliced}' y2='100'/></g>`;
             let lastpointlabel = `<text x='${
-              lastpoint.x
+              lastpoint.x +50
             }' stroke='none' fill='blue' y='${
-              lastpoint.y + 5 + low + yoffset
-            }'> ${lastpoint.percentage} %</text>`;
+              lastpoint.y + low + yoffset
+            }' text-anchor='end'> ${lastpoint.percentage} %</text>`;
             let lastdate = `<text font-size='8px' text-anchor='end' x='${
-              lastpoint.x + 45
-            }' y='${lastpoint.y + 13 + low + yoffset}'>${
+              lastpoint.x + 50
+            }' y='${lastpoint.y + 8 + low + yoffset}' text-anchor='end'>${
               lastpoint.date
             }</text>`;
-            let daterange = `<text font-size='7px' x='5' y='19'>${firstpoint.date} to ${lastpoint.date}</text>`;
-            let lowlabel = `<text x='5' y='30'>low:</text><text x='85' y='30' text-anchor='end'>${low} %</text>`;
-            let highlabel = `<text x='5' y='40'>high:</text><text x='85' y='40' text-anchor='end'>${high} %</text>`;
+            let daterange = `<text font-size='8px' x='5' y='21'>${firstpoint.date} to ${lastpoint.date}</text>`;
+            daterange += `<text font-size='10px' x='5' y='31'>Weekly Average</text>`;
+            let lowlabel = `<text x='5' y='40'>low:</text><text x='85' y='42' text-anchor='end'>${low} %</text>`;
+            let highlabel = `<text x='5' y='50'>high:</text><text x='85' y='52' text-anchor='end'>${high} %</text>`;
             let title = `<text x='5' y='10'>${_feature.id}  ${_feature.title}</text>${daterange}`;
-            let labels = `<g font-size='12px' font-family='arial'>${title}${lowlabel}${highlabel}${lastpointlabel}${lastdate}${pline}</g>`;
+            let labels = `<g font-size='10px' font-family='arial'>${title}${lowlabel}${highlabel}${lastpointlabel}${lastdate}${pline}${years}</g>`;
+            let years = yearXs.map(({ x, year }) => `<text x='${x}' font-size='8px' y='97' text-anchor='end'>${year}</text>`).join``;
             let svg = `<svg preserveAspectRatio="xMinYMid meet" xmlns='http://www.w3.org/2000/svg' viewBox="0 0 ${sliced} ${100}">${labels}</svg>`;
 
             this.innerHTML = svg;
@@ -204,7 +217,7 @@
               .map((id, idx) => {
                 let el = document.createElement(_FEATURE);
                 el.id = id;
-                if (idx < 32) return el;
+                if (idx < 22) return el;
               })
               .filter(Boolean);
             this.append(...WebComponentsFeatures);
