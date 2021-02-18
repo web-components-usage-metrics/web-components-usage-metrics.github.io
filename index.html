@@ -176,8 +176,8 @@
             let lowlabel = `<text x='5' y='40'>low:</text><text x='85' y='42' text-anchor='end'>${low} %</text>`;
             let highlabel = `<text x='5' y='50'>high:</text><text x='85' y='52' text-anchor='end'>${high} %</text>`;
             let title = `<text x='5' y='10'>${_feature.id}  ${_feature.title}</text>${daterange}`;
-            let labels = `<g font-size='10px' font-family='arial'>${title}${lowlabel}${highlabel}${lastpointlabel}${lastdate}${pline}${years}</g>`;
             let years = yearXs.map(({ x, year }) => `<text x='${x}' font-size='8px' y='97' text-anchor='end'>${year}</text>`).join``;
+            let labels = `<g font-size='10px' font-family='arial'>${title}${lowlabel}${highlabel}${lastpointlabel}${lastdate}${pline}${years}</g>`;
             let svg = `<svg preserveAspectRatio="xMinYMid meet" xmlns='http://www.w3.org/2000/svg' viewBox="0 0 ${sliced} ${100}">${labels}</svg>`;
 
             this.innerHTML = svg;
