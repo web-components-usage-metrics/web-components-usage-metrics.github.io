@@ -10,6 +10,10 @@
       body {
         --background: lightgrey;
         background: var(--background);
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      h1,h3{
+        margin:.1em;
       }
       svg {
         cursor: pointer;
@@ -70,7 +74,9 @@
             this.id = this.getAttribute("id");
             this.period = 52 * 3;
             let svg = `<text x='20' y='20'>Loading ${this.id}</text>`;
-            this.innerHTML = `<svg preserveAspectRatio="xMinYMid meet" xmlns='http://www.w3.org/2000/svg' viewBox="0 0 ${this.period} ${100}">${svg}</svg>`;
+            this.innerHTML = `<svg preserveAspectRatio="xMinYMid meet" xmlns='http://www.w3.org/2000/svg' viewBox="0 0 ${
+              this.period
+            } ${100}">${svg}</svg>`;
             let response = await fetch(
               "https://chromestatus.com/data/timeline/featurepopularity?bucket_id=" +
                 this.id
@@ -185,8 +191,7 @@
 
             let lowhighlabel =
               `<g transform='translate(5 -10)' font-size='10px'>` +
-              `<text y='31'>Weekly Average</text>` +
-              `<text font-size='8px' x='80' y='31'>${firstpoint.date} to ${lastpoint.date}</text>` +
+              `<text font-size='8px' x='0' y='30'>${firstpoint.date} to ${lastpoint.date}</text>` +
               `<text y='40'>low:</text><text x='80' y='42'  text-anchor='end'>${low} %</text>` +
               `<text y='50'>high:</text><text x='80' y='52' text-anchor='end'>${high} %</text>` +
               `</g>`;
@@ -208,7 +213,9 @@
 
             let svg = axis + linegraph;
 
-            this.innerHTML = `<svg preserveAspectRatio="xMinYMid meet" xmlns='http://www.w3.org/2000/svg' viewBox="0 0 ${feature.period} ${100}">${svg}</svg>`;
+            this.innerHTML = `<svg preserveAspectRatio="xMinYMid meet" xmlns='http://www.w3.org/2000/svg' viewBox="0 0 ${
+              feature.period
+            } ${100}">${svg}</svg>`;
             this.onclick = (evt) =>
               window.open(
                 `https://chromestatus.com/metrics/feature/timeline/popularity/${_feature.id}`
@@ -246,7 +253,11 @@
                 el.id = id;
                 return el;
               });
+              this.innerHTML=`<h1>Web Components Features</h1><h3>Weekly average statistics from Chrome Platform Status</h3>`;
             this.append(...WebComponentsFeatures);
+            setInterval(() => {
+              document.location.reload();
+            }, 1000 * 60 * 60 * 12);
           }
         }
       );
