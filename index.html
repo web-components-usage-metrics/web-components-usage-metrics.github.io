@@ -68,13 +68,15 @@
         class extends ChromeStatusBaseElement {
           async connectedCallback() {
             this.id = this.getAttribute("id");
-            this.innerHTML = `<h2>Loading: ${this.id}</h2>`;
+            this.period = 52 * 3;
+            let svg = `<text x='20' y='20'>Loading ${this.id}</text>`;
+            this.innerHTML = `<svg preserveAspectRatio="xMinYMid meet" xmlns='http://www.w3.org/2000/svg' viewBox="0 0 ${this.period} ${100}">${svg}</svg>`;
             let response = await fetch(
               "https://chromestatus.com/data/timeline/featurepopularity?bucket_id=" +
                 this.id
             );
-            this.innerHTML = "";
             let data = await response.json();
+            this.innerHTML = "";
             this.title = data[0].property_name;
             this.high = 0;
             this.low = 100;
@@ -97,10 +99,10 @@
         _LASTDAYS,
         class extends ChromeStatusBaseElement {
           connectedCallback() {
+            let feature = this.closest(_FEATURE);
             let roundPercentage = (x) => ~~(x * 1e3) / 1e3;
             let _feature = this.closestElement(_FEATURE);
             let data = _feature.data;
-            let sliced = 52 * 3;
             let high = 0;
             let low = 100;
             let pctCount = 0;
@@ -128,7 +130,7 @@
             let _SCALEX = 1.5;
             let _SCALEY = 3;
             let yearXs = [];
-            let datapoints = average.slice(-sliced).map((day, idx) => {
+            let datapoints = average.slice(-feature.period).map((day, idx) => {
               let { date, percentage } = day;
               if (percentage > high) high = percentage;
               if (percentage < low) low = percentage;
@@ -206,7 +208,7 @@
 
             let svg = axis + linegraph;
 
-            this.innerHTML = `<svg preserveAspectRatio="xMinYMid meet" xmlns='http://www.w3.org/2000/svg' viewBox="0 0 ${sliced} ${100}">${svg}</svg>`;
+            this.innerHTML = `<svg preserveAspectRatio="xMinYMid meet" xmlns='http://www.w3.org/2000/svg' viewBox="0 0 ${feature.period} ${100}">${svg}</svg>`;
             this.onclick = (evt) =>
               window.open(
                 `https://chromestatus.com/metrics/feature/timeline/popularity/${_feature.id}`
