@@ -125,30 +125,37 @@
               }, [])
               .reverse();
             let lastyear = 2000;
+            let _SCALEX = 1.5;
+            let _SCALEY = 3;
             let yearXs = [];
             let datapoints = average.slice(-sliced).map((day, idx) => {
               let { date, percentage } = day;
               if (percentage > high) high = percentage;
               if (percentage < low) low = percentage;
               let year = Number(day.date.slice(0, 4));
-              if (year > lastyear) {
-                yearXs.push({
-                  x: idx * 1.5,
-                  year,
-                });
-                lastyear = year;
-              }
-              return {
-                x: idx * 1.5,
-                y: 100 - day.percentage * 3.5,
+              let x = idx * _SCALEX;
+              let y = 100 - day.percentage * _SCALEY;
+              let datapoint = {
+                x,
+                y,
                 date,
+                year,
                 percentage,
               };
+              if (year > lastyear) {
+                yearXs.push(datapoint);
+                lastyear = year;
+              }
+              return datapoint;
             });
             let diff = high - low;
             let firstpoint = datapoints[0];
             let lastpoint = datapoints.slice(-1)[0];
             let yoffset = high < 2 ? -15 : low; // shift y 5 pixels up or low down
+            let xoffset = 50;
+            let axisX = 10;
+            let axisY = 92;
+            let ymargin = 10;
             let points = datapoints.map(({ x, y }) => {
               if (high > 25) {
                 y = y / 5;
@@ -157,30 +164,49 @@
               }
               return x + " " + y;
             });
-            let pline = `<polyline stroke='blue' fill='none' stroke-width='1' transform='translate(10 ${
+            let pline = `<polyline stroke='blue' fill='none' stroke-width='1' transform='translate(0 ${
               low - 10 + yoffset
             })' points='${points}'/>`;
-            let axisY = `<g stroke='black' stroke-width='1'><line x1='10' y1='0' x2='10' y2='100'/><line x1='10' y1='100' x2='${sliced}' y2='100'/></g>`;
+            let axis = `<g stroke='grey' stroke-width='.5'><line x1='${axisX}' y1='${ymargin}' x2='${axisX}' y2='${axisY}'/><line x1='${axisX}' y1='${axisY}' x2='${
+              lastpoint.x + xoffset
+            }' y2='${axisY}'/></g>`;
             let lastpointlabel = `<text x='${
-              lastpoint.x +50
+              lastpoint.x + xoffset - axisX
             }' stroke='none' fill='blue' y='${
               lastpoint.y + low + yoffset
             }' text-anchor='end'> ${lastpoint.percentage} %</text>`;
             let lastdate = `<text font-size='8px' text-anchor='end' x='${
-              lastpoint.x + 50
+              lastpoint.x + xoffset - axisX
             }' y='${lastpoint.y + 8 + low + yoffset}' text-anchor='end'>${
               lastpoint.date
             }</text>`;
-            let daterange = `<text font-size='8px' x='5' y='21'>${firstpoint.date} to ${lastpoint.date}</text>`;
-            daterange += `<text font-size='10px' x='5' y='31'>Weekly Average</text>`;
-            let lowlabel = `<text x='5' y='40'>low:</text><text x='85' y='42' text-anchor='end'>${low} %</text>`;
-            let highlabel = `<text x='5' y='50'>high:</text><text x='85' y='52' text-anchor='end'>${high} %</text>`;
-            let title = `<text x='5' y='10'>${_feature.id}  ${_feature.title}</text>${daterange}`;
-            let years = yearXs.map(({ x, year }) => `<text x='${x}' font-size='8px' y='97' text-anchor='end'>${year}</text>`).join``;
-            let labels = `<g font-size='10px' font-family='arial'>${title}${lowlabel}${highlabel}${lastpointlabel}${lastdate}${pline}${years}</g>`;
-            let svg = `<svg preserveAspectRatio="xMinYMid meet" xmlns='http://www.w3.org/2000/svg' viewBox="0 0 ${sliced} ${100}">${labels}</svg>`;
 
-            this.innerHTML = svg;
+            let lowhighlabel =
+              `<g transform='translate(5 -10)' font-size='10px'>` +
+              `<text y='31'>Weekly Average</text>` +
+              `<text font-size='8px' x='80' y='31'>${firstpoint.date} to ${lastpoint.date}</text>` +
+              `<text y='40'>low:</text><text x='80' y='42'  text-anchor='end'>${low} %</text>` +
+              `<text y='50'>high:</text><text x='80' y='52' text-anchor='end'>${high} %</text>` +
+              `</g>`;
+
+            let title = `<text x='5' y='${ymargin}'>${_feature.id}  ${_feature.title}</text>`;
+            let years = yearXs.map(({ x, year }) =>
+              x > axisX
+                ? `<text x='${x}' font-size='8px' y='${
+                    axisY + 7
+                  }' text-anchor='middle'>${year}</text>` +
+                  `<line x1='${x}' y1='${ymargin}' x2='${x}' y2='${
+                    axisY + 2
+                  }' stroke='grey' stroke-width='.25'/>`
+                : ""
+            ).join``;
+            let linegraph = `<g font-size='10px' font-family='arial' transform='translate(${
+              axisX - 2
+            } 0)'>${title}${lowhighlabel}${lastpointlabel}${lastdate}${pline}${years}</g>`;
+
+            let svg = axis + linegraph;
+
+            this.innerHTML = `<svg preserveAspectRatio="xMinYMid meet" xmlns='http://www.w3.org/2000/svg' viewBox="0 0 ${sliced} ${100}">${svg}</svg>`;
             this.onclick = (evt) =>
               window.open(
                 `https://chromestatus.com/metrics/feature/timeline/popularity/${_feature.id}`
@@ -193,7 +219,7 @@
         _OVERVIEW,
         class extends ChromeStatusBaseElement {
           connectedCallback() {
-            // V0 1897,456
+            // V0 Features: 1897,456
             let WebComponentsFeatures = [
               1689,
               804,
@@ -212,14 +238,12 @@
               2848,
               779,
             ]
-              //.sort()
-              //.reverse()
+              .slice(0, 3)
               .map((id, idx) => {
                 let el = document.createElement(_FEATURE);
                 el.id = id;
-                if (idx < 22) return el;
-              })
-              .filter(Boolean);
+                return el;
+              });
             this.append(...WebComponentsFeatures);
           }
         }
