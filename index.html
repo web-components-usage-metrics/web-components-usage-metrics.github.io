@@ -230,24 +230,24 @@
           connectedCallback() {
             // V0 Features: 1897,456
             let WebComponentsFeatures = [
-              1689,
-              804,
-              2769,
-              1467,
-              1898,
-              907,
-              908,
-              1118,
-              1468,
-              1308,
-              1422,
-              3435,
-              2164,
-              2441,
-              2848,
-              779,
+              1689, CustomElementsRegistryDefine
+              804, // ElementAttachShadow
+              2769, // HTMLTemplateElement
+              1467, // NodeGetRootNode
+              1898, // HTMLSlotElement
+              907, // ElementAttachShadowOpen
+              908, // ElementAttachShadowClosed
+              //1118, // CSSSelectorPseudoSlotted
+              1468, // SlotChangeEventAddListener
+              1308, // ShadowRootDelegatesFocus
+              //1422, //ShadowRootPointerLockElement
+              3435, // ElementAttachInternals
+              //2164, //PsuedoShadowInStaticProfile
+              //779, // ElementCreateShadowRootMultiple
+              3196, // DeclarativeShadowRoot
+              4421, // StreamingDeclarativeShadowDOM
             ]
-              .slice(0, 23)
+              //.slice(0, 23)
               .map((id, idx) => {
                 let el = document.createElement(_FEATURE);
                 el.id = id;
