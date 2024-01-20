@@ -18,7 +18,7 @@
       svg {
         cursor: pointer;
         background: beige;
-        --scale: 1.3;
+        --scale: 2;
         width: calc(300px * var(--scale));
         height: calc(100px * var(--scale));
       }
@@ -231,21 +231,24 @@
             // V0 Features: 1897,456
             let WebComponentsFeatures = [
               1689, // CustomElementsRegistryDefine
+              3196, // DeclarativeShadowRoot
+              4421, // StreamingDeclarativeShadowDOM
+
               804, // ElementAttachShadow
-              2769, // HTMLTemplateElement
-              1467, // NodeGetRootNode
-              1898, // HTMLSlotElement
               907, // ElementAttachShadowOpen
               908, // ElementAttachShadowClosed
-              //1118, // CSSSelectorPseudoSlotted
+
+              2769, // HTMLTemplateElement
+              1898, // HTMLSlotElement
               1468, // SlotChangeEventAddListener
+              
+              //1118, // CSSSelectorPseudoSlotted
               1308, // ShadowRootDelegatesFocus
               //1422, //ShadowRootPointerLockElement
               3435, // ElementAttachInternals
+              1467, // NodeGetRootNode
               //2164, //PsuedoShadowInStaticProfile
               //779, // ElementCreateShadowRootMultiple
-              3196, // DeclarativeShadowRoot
-              4421, // StreamingDeclarativeShadowDOM
             ]
               //.slice(0, 23)
               .map((id, idx) => {
